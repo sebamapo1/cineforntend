@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/icons.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/featuredmovies.tsx","./src/components/footer.tsx","./src/components/hero.tsx","./src/components/navbar.tsx","./src/components/promotions.tsx","./src/components/promotionsbanner.tsx","./src/components/showtimeslocations.tsx","./src/components/upcomingmovies.tsx"],"version":"5.6.2"}
