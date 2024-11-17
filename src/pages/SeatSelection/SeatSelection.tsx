@@ -17,17 +17,20 @@ const generateSeats = (): Seat[] => {
 
   for (let row = 1; row <= rows; row++) {
     for (let col = 1; col <= columns; col++) {
+      const type = (row % 2 === 0 && col % 2 === 0) ? "occupied" : "available"; 
+      
       seats.push({
         id: `${row}-${col}`,
         row,
         number: col,
-        type: Math.random() > 0.8 ? "occupied" : "available",
+        type,
       });
     }
   }
 
   return seats;
 };
+
 
 export default function SeatSelection() {
   const { isAuthenticated } = useAuth();
