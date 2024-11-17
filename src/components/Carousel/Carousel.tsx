@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'; 
 import { Link } from 'react-router-dom';
 import './Carousel.css';
 
@@ -42,14 +42,14 @@ export default function Carousel() {
   const nextSlide = () => {
     if (!isTransitioning) {
       setIsTransitioning(true);
-      setCurrentSlide((prev) => (prev + 1) % movies.length);
+      setCurrentSlide((prev) => (prev + 1) % movies.length); // Loop forward
     }
   };
 
   const prevSlide = () => {
     if (!isTransitioning) {
       setIsTransitioning(true);
-      setCurrentSlide((prev) => (prev - 1 + movies.length) % movies.length);
+      setCurrentSlide((prev) => (prev - 1 + movies.length) % movies.length); // Loop backward
     }
   };
 
