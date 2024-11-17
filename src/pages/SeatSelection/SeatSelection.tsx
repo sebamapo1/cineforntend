@@ -10,19 +10,18 @@ type Seat = {
   type: "available" | "occupied" | "selected";
 };
 
-const generateSeats = (occupiedSeats: string[] = []): Seat[] => {
+const generateSeats = (): Seat[] => {
   const rows = 15;
   const columns = 10;
   const seats: Seat[] = [];
 
   for (let row = 1; row <= rows; row++) {
     for (let col = 1; col <= columns; col++) {
-      const seatId = `${row}-${col}`;
       seats.push({
-        id: seatId,
+        id: `${row}-${col}`,
         row,
         number: col,
-        type: occupiedSeats.includes(seatId) ? "occupied" : "available",
+        type: Math.random() > 0.8 ? "occupied" : "available",
       });
     }
   }
@@ -41,29 +40,9 @@ export default function SeatSelection() {
     return <Navigate to="/login" />;
   }
 
-  const [seats, setSeats] = useState<Seat[]>([]);
+  const [seats, setSeats] = useState<Seat[]>(generateSeats());
   const [seatSize, setSeatSize] = useState(30);
   const [selectedSeats, setSelectedSeats] = useState<Seat[]>([]);
-  const [error, setError] = useState<string>("");
-
-  useEffect(() => {
-    const fetchOccupiedSeats = async () => {
-      try {
-        const response = await fetch("/seats/room/${roomId}");
-        if (!response.ok) {
-          throw new Error("Error fetching occupied seats");
-        }
-        const occupiedSeats: string[] = await response.json(); // Array of seat IDs
-        setSeats(generateSeats(occupiedSeats));
-      } catch (error) {
-        console.error("Error:", error);
-        setError("No se pudieron cargar los asientos ocupados");
-        setSeats(generateSeats()); // Fallback: all seats available
-      }
-    };
-
-    fetchOccupiedSeats();
-  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -126,14 +105,6 @@ export default function SeatSelection() {
       console.error("Error:", error);
     }
   };
-
-  if (error) {
-    return <div className="error">{error}</div>;
-  }
-
-  if (seats.length === 0) {
-    return <div className="loading">Cargando asientos...</div>;
-  }
 
   return (
     <div className="seat-selection-container">
