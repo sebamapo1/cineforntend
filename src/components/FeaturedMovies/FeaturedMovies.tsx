@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import styles from './FeaturedMovies.module.css';
+import styles from './FeaturedMovies.module.css'; // Ensure this path is correct
 
 interface Movie {
   idPelicula: number;
@@ -20,9 +20,9 @@ const FeaturedMovies = () => {
         }
         const movies = await response.json();
         setFeaturedMovies(movies);
-      } catch (error) {
+      } catch (err) {
         setError('Error fetching movies');
-        console.error('Error fetching movies:', error);
+        console.error('Error fetching movies:', err);
       }
     };
 
