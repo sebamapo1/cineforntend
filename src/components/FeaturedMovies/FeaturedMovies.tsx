@@ -1,39 +1,41 @@
 import { useState, useEffect } from 'react';
 import './FeaturedMovies.css';
 
-interface Movie {
-  movieId: number;
-  name: string;
-  coverImagebase64: string;
+interface Pelicula {
+  idPelicula: number;
+  nombre: string;
+  imagenBase64: string;
 }
 
-const FeaturedMovies = () => {
-  const [featuredMovies, setFeaturedMovies] = useState<Movie[]>([]);
+const PeliculasDestacadas = () => {
+  const [peliculasDestacadas, setPeliculasDestacadas] = useState<Pelicula[]>([]);
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
-    const fetchMovies = async () => {
+    const obtenerPeliculas = async () => {
       try {
-        const response = await fetch('https://cine-o753.onrender.com/movies');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
+        const respuesta = await fetch('https://cine-o753.onrender.com/movies');
+        if (!respuesta.ok) {
+          throw new Error('La respuesta de la red no fue exitosa');
         }
-        const movies = await response.json();
-        setFeaturedMovies(movies);
+        const peliculas = await respuesta.json();
+        setPeliculasDestacadas(peliculas);
       } catch (error) {
-        setError('Error fetching movies');
-        console.error('Error fetching movies:', error);
+        setError('Error al obtener las películas');
+        console.error('Error al obtener las películas:', error);
       }
     };
 
-    fetchMovies();
+    obtenerPeliculas();
   }, []);
 
-  const getImageSrc = (base64String: string) => {
-    if (base64String?.startsWith('data:image')) {
-      return base64String;
+  const obtenerSrcImagen = (cadenaBase64: string) => {
+    if (cadenaBase64?.startsWith('data:image')) {
+      return cadenaBase64;
     }
-    return base64String ? `data:image/jpeg;base64,${base64String}` : '/api/placeholder/300/450';
+    return cadenaBase64
+      ? `data:image/jpeg;base64,${cadenaBase64}`
+      : '/api/placeholder/300/450';
   };
 
   if (error) {
@@ -41,17 +43,17 @@ const FeaturedMovies = () => {
   }
 
   return (
-    <div className="featured-movies">
+    <div className="peliculas-destacadas">
       <h2>Películas Destacadas</h2>
-      <div className="featured-movies-grid">
-        {featuredMovies.map((movie) => (
-          <div key={movie.movieId} className="featured-movie">
+      <div className="peliculas-destacadas-grid">
+        {peliculasDestacadas.map((pelicula) => (
+          <div key={pelicula.idPelicula} className="pelicula-destacada">
             <img
-              src={getImageSrc(movie.coverImagebase64)}
-              alt={movie.name}
-              className="movie-image"
+              src={obtenerSrcImagen(pelicula.imagenBase64)}
+              alt={pelicula.nombre}
+              className="imagen-pelicula"
             />
-            <h3>{movie.name}</h3>
+            <h3>{pelicula.nombre}</h3>
           </div>
         ))}
       </div>
@@ -59,4 +61,4 @@ const FeaturedMovies = () => {
   );
 };
 
-export default FeaturedMovies;
+export default PeliculasDestacadas;
