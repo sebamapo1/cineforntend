@@ -21,7 +21,7 @@ export default function CinemaPurchases() {
   useEffect(() => {
     // Fetch data from the backend using Axios
     axios
-      .get(`http://localhost:8080/reservations/user/${userId}`)
+      .get(`https://cine-o753.onrender.com/reservations/user/${userId}`)
       .then((response) => {
         setPurchases(response.data); // Set the fetched reservations
       })
