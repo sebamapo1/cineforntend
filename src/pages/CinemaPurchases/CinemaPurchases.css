@@ -76,20 +76,3 @@ body {
     padding: var(--spacing-md);
   }
 }
-.cancel-button {
-  background-color: #e53e3e; /* Red color */
-  color: #fff;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  transition: background-color var(--transition-duration);
-}
-
-.cancel-button:hover {
-  background-color: #c53030; /* Darker red on hover */
-}
-
-.cancel-button:focus {
-  outline: none;
-}
