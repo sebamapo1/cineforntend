@@ -14,23 +14,34 @@ export default function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(''); // Clear previous errors
-
+  
     if (password !== confirmPassword) {
       setError('Las contraseñas no coinciden');
       return;
     }
-
+  
+    if (!/^\d{8,}$/.test(telephone)) {
+      setError('El teléfono debe tener al menos 8 dígitos y solo contener números');
+      return;
+    }
+  
     try {
-      const response = await axios.post('https://cine-o753.onrender.com/users/register', {
-        name,
-        lastName,
-        email,
-        password,
-        telephone,
-      });
-
+      const response = await axios.post(
+        'https://cine-o753.onrender.com/users/register',
+        {
+          name,
+          lastName,
+          email,
+          password,
+          telephone,
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+  
       if (response.status === 201) {
-        alert('Usuario registrado con éxito');
+        setError('Usuario registrado con éxito');
       }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -44,6 +55,7 @@ export default function Register() {
       }
     }
   };
+  
 
   return (
     <div className="LoginRegister-form">

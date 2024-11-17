@@ -49,7 +49,7 @@ export default function SeatSelection() {
   useEffect(() => {
     const fetchOccupiedSeats = async () => {
       try {
-        const response = await fetch("/api/occupied-seats");
+        const response = await fetch("/seats/room/${roomId}");
         if (!response.ok) {
           throw new Error("Error fetching occupied seats");
         }
