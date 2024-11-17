@@ -120,14 +120,12 @@ export default function TicketBooking() {
     // Navigate to seat selection with showtime information
     navigate('/seat-selection', {
       state: {
-        showtimeId: selectedTime.showtimeId,
-        movieName: selectedTime.movie.name,
-        cinema: `${selectedTime.room.cinema.neighborhood}, ${selectedTime.room.cinema.address}`,
+        movieName: movies.find(movie => movie.movieId === selectedMovie)?.name || 'Movie Name',
+        cinema: `${cinemas.find(cinema => cinema.cinemaId === selectedCinema)?.neighborhood}, ${cinemas.find(cinema => cinema.cinemaId === selectedCinema)?.address}`,
         datetime: selectedTime.showtimeDate,
         roomId: selectedTime.room.roomId,
       },
     });
-    
   };
 
   if (error) return <div className="error-message">{error}</div>;
