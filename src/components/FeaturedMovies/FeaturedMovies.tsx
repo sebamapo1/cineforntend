@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import styles from './FeaturedMovies.css';
+import './FeaturedMovies.css';
 
 interface Movie {
   idPelicula: number;
@@ -29,10 +29,6 @@ const FeaturedMovies = () => {
     fetchMovies();
   }, []);
 
-  if (error) {
-    return <div className={styles.error}>{error}</div>;
-  }
-
   const getImageSrc = (base64String: string) => {
     if (base64String?.startsWith('data:image')) {
       return base64String;
@@ -42,18 +38,22 @@ const FeaturedMovies = () => {
       : '/api/placeholder/300/450';
   };
 
+  if (error) {
+    return <div className="error">{error}</div>;
+  }
+
   return (
-    <div className={styles.featuredMovies}>
-      <h2 className={styles.title}>Películas Destacadas</h2>
-      <div className={styles.moviesGrid}>
+    <div className="featured-movies">
+      <h2 className="title">Películas Destacadas</h2>
+      <div className="movies-grid">
         {featuredMovies.map((movie) => (
-          <div key={movie.idPelicula} className={styles.movieCard}>
+          <div key={movie.idPelicula} className="movie-card">
             <img
               src={getImageSrc(movie.imagenBase64)}
               alt={movie.nombre}
-              className={styles.movieImage}
+              className="movie-image"
             />
-            <h3 className={styles.movieTitle}>{movie.nombre}</h3>
+            <h3 className="movie-title">{movie.nombre}</h3>
           </div>
         ))}
       </div>
@@ -61,4 +61,4 @@ const FeaturedMovies = () => {
   );
 };
 
-export default FeaturedMovies;
+export default FeaturedMovies;

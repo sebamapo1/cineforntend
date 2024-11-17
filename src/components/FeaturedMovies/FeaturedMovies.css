@@ -1,38 +1,32 @@
-.featuredMovies {
+.featured-movies {
   padding: 20px;
-}
-
-.title {
-  font-size: 2rem;
-  margin-bottom: 20px;
-}
-
-.moviesGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
-}
-
-.movieCard {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.movieImage {
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-}
-
-.movieTitle {
-  font-size: 1.25rem;
-  margin-top: 10px;
 }
 
 .error {
   color: red;
-  font-size: 1.25rem;
+  text-align: center;
+}
+
+.title {
+  font-size: 24px;
+}
+
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 20px;
+}
+
+.movie-card {
+  text-align: center;
+}
+
+.movie-image {
+  width: 100%;
+  border-radius: 5px;
+}
+
+.movie-title {
+  margin-top: 10px;
+  font-size: 18px;
 }
