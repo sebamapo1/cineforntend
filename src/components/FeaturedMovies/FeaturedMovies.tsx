@@ -43,15 +43,15 @@ const PeliculasDestacadas = () => {
   }
 
   return (
-    <div className="peliculas-destacadas">
+    <div className="featured-movies">
       <h2>Películas Destacadas</h2>
-      <div className="peliculas-destacadas-grid">
+      <div className="featured-movies-grid">
         {peliculasDestacadas.map((pelicula) => (
-          <div key={pelicula.idPelicula} className="pelicula-destacada">
+          <div key={pelicula.idPelicula} className="featured-movie">
             <img
               src={obtenerSrcImagen(pelicula.imagenBase64)}
               alt={pelicula.nombre}
-              className="imagen-pelicula"
+              className="movie-image"
             />
             <h3>{pelicula.nombre}</h3>
           </div>
