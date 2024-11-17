@@ -1,229 +1,209 @@
-import { useState, useEffect } from 'react';
-import { format } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
-import './TicketBooking.css';
+import "./SeatSelection.css";
+import { useEffect, useState } from "react";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
-interface Movie {
-  movieId: number;
-  name: string;
-}
+type Seat = {
+  id: string;
+  row: number;
+  number: number;
+  type: "available" | "occupied" | "selected";
+};
 
-interface Cinema {
-  cinemaId: number;
-  neighborhood: string;
-  address: string;
-}
+const generateSeats = (): Seat[] => {
+  const rows = 15;
+  const columns = 10;
+  const seats: Seat[] = [];
 
-interface ShowTime {
-  showtimeId: number;
-  movie: Movie;
-  showtimeDate: string;
-  room: {
-    roomId: number;
-    cinema: Cinema;
-  };
-}
+  for (let row = 1; row <= rows; row++) {
+    for (let col = 1; col <= columns; col++) {
+      seats.push({
+        id: `${row}-${col}`,
+        row,
+        number: col,
+        type: "available", // All seats are available
+      });
+    }
+  }
 
-export default function TicketBooking() {
+  return seats;
+};
+
+export default function SeatSelection() {
+  const { isAuthenticated } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
-  const [movies, setMovies] = useState<Movie[]>([]);
-  const [cinemas, setCinemas] = useState<Cinema[]>([]);
-  const [selectedMovie, setSelectedMovie] = useState<number | null>(null);
-  const [selectedCinema, setSelectedCinema] = useState<number | null>(null);
-  const [availableDates, setAvailableDates] = useState<string[]>([]);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [availableTimes, setAvailableTimes] = useState<ShowTime[]>([]);
-  const [selectedTime, setSelectedTime] = useState<ShowTime | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { movieName = "Película no especificada", cinema = "Dirección no especificada" } =
+    location.state || {};
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+
+  const [seats, setSeats] = useState<Seat[]>(generateSeats());
+  const [seatSize, setSeatSize] = useState(30);
+  const [selectedSeats, setSelectedSeats] = useState<Seat[]>([]);
 
   useEffect(() => {
-    const fetchMoviesAndCinemas = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const [moviesResponse, cinemasResponse] = await Promise.all([
-          fetch('https://cine-o753.onrender.com/movies'),
-          fetch('https://cine-o753.onrender.com/cinemas'),
-        ]);
-
-        if (!moviesResponse.ok || !cinemasResponse.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        const moviesData = await moviesResponse.json();
-        const cinemasData = await cinemasResponse.json();
-        setMovies(moviesData || []);
-        setCinemas(cinemasData || []);
-      } catch (error) {
-        console.error('Error fetching movies and cinemas:', error);
-        setError('Could not load movies and cinemas. Please try again later.');
-      } finally {
-        setIsLoading(false);
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width < 480) {
+        setSeatSize(20);
+      } else if (width < 768) {
+        setSeatSize(25);
+      } else if (width < 1024) {
+        setSeatSize(30);
+      } else {
+        setSeatSize(35);
       }
     };
-    fetchMoviesAndCinemas();
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    const fetchShowtimes = async () => {
-      if (!selectedMovie || !selectedCinema) return;
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`https://cine-o753.onrender.com/showtimes/by-movie-cinema/${selectedMovie}/${selectedCinema}`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data: string[] = await response.json();
+  const toggleSeatSelection = (seatId: string) => {
+    setSeats((prevSeats) =>
+      prevSeats.map((seat) =>
+        seat.id === seatId && seat.type === "available"
+          ? { ...seat, type: "selected" }
+          : seat.id === seatId && seat.type === "selected"
+          ? { ...seat, type: "available" }
+          : seat
+      )
+    );
 
-        const datesSet = new Set<string>();
-        const showtimes: ShowTime[] = [];
-        data.forEach((showtimeStr, index) => {
-          const showtimeDate = new Date(showtimeStr); // Parse the backend date string
-          const dateOnly = showtimeDate.toISOString().split('T')[0]; // Get date part only
-          datesSet.add(dateOnly);
-          showtimes.push({
-            showtimeId: index,  // assuming index is the unique ID for the showtime
-            movie: { movieId: selectedMovie, name: "Sample Movie" }, // Movie info can be adjusted
-            showtimeDate: showtimeDate.toISOString(),
-            room: { roomId: selectedCinema, cinema: { cinemaId: selectedCinema, neighborhood: 'Pocitos', address: 'Sample Address' } }
-          });
-        });
-        setAvailableDates(Array.from(datesSet).sort());
-        setAvailableTimes(showtimes);
-      } catch (error) {
-        console.error('Error fetching showtimes:', error);
-        setError('Could not load showtimes. Please try again later.');
-      } finally {
-        setIsLoading(false);
+    setSelectedSeats((prev) =>
+      prev.some((seat) => seat.id === seatId)
+        ? prev.filter((seat) => seat.id !== seatId)
+        : [...prev, seats.find((seat) => seat.id === seatId)!]
+    );
+  };
+
+  const handleBuyTickets = async () => {
+    try {
+      const response = await fetch("/api/purchase", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          movieName,
+          cinema,
+          seats: selectedSeats,
+        }),
+      });
+
+      if (response.ok) {
+        navigate("/cinema-purchases");
+      } else {
+        console.error("Error purchasing tickets");
       }
-    };
-    fetchShowtimes();
-  }, [selectedMovie, selectedCinema]);
-
-  const handleDateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedDate = event.target.value;
-    setSelectedDate(selectedDate);
-    setSelectedTime(null); // Reset selected time when date changes
-  };
-
-  const handleTimeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedTimeId = Number(event.target.value);
-    const selectedTime = availableTimes.find((time) => time.showtimeId === selectedTimeId);
-    setSelectedTime(selectedTime || null);
-  };
-
-  const handlePurchase = () => {
-    if (!selectedTime) {
-      alert('Please select a showtime before purchasing');
-      return;
+    } catch (error) {
+      console.error("Error:", error);
     }
-    // Navigate to seat selection with showtime information
-    navigate('/seat-selection', {
-      state: {
-        movieName: movies.find(movie => movie.movieId === selectedMovie)?.name || 'Movie Name',
-        cinema: `${cinemas.find(cinema => cinema.cinemaId === selectedCinema)?.neighborhood}, ${cinemas.find(cinema => cinema.cinemaId === selectedCinema)?.address}`,
-        datetime: selectedTime.showtimeDate,
-        roomId: selectedTime.room.roomId,
-      },
-    });
   };
-
-  if (error) return <div className="error-message">{error}</div>;
-  if (isLoading) return <div className="loading-message">Loading...</div>;
 
   return (
-    <div className="ticket-booking-container">
-      <div className="form-group">
-        <label htmlFor="movie-select">Select a Movie</label>
-        <select
-          id="movie-select"
-          className="select-input"
-          value={selectedMovie || ''}
-          onChange={(e) => {
-            const movieId = Number(e.target.value);
-            setSelectedMovie(movieId || null);
-            setSelectedCinema(null);
-            setSelectedDate(null);
-            setSelectedTime(null);
-          }}
-        >
-          <option value="">Select a Movie</option>
-          {movies.map((movie) => (
-            <option key={`movie-${movie.movieId}`} value={movie.movieId}>
-              {movie.name}
-            </option>
+    <div className="seat-selection-container">
+      <div className="seat-selection-content">
+        <h1 className="seat-selection-title">Elige tu asiento</h1>
+        <div className="seat-selection-legend">
+          <div className="seat-selection-legend-item">
+            <span className="seat-selection-legend-color seat-selection-occupied"></span>
+            Ocupado
+          </div>
+          <div className="seat-selection-legend-item">
+            <span className="seat-selection-legend-color seat-selection-available"></span>
+            Disponible
+          </div>
+          <div className="seat-selection-legend-item">
+            <span className="seat-selection-legend-color seat-selection-selected"></span>
+            Seleccionado
+          </div>
+        </div>
+        <div className="seat-selection-screen"></div>
+        <div className="seat-selection-screen-label">Pantalla</div>
+        <div className="seat-selection-seating-area">
+          <div className="seat-selection-grid">
+            <div className="seat-selection-row-numbers">
+              {Array.from({ length: 15 }, (_, i) => (
+                <div
+                  key={i}
+                  className="seat-selection-row-number"
+                  style={{
+                    height: `${seatSize}px`,
+                    lineHeight: `${seatSize}px`,
+                  }}
+                >
+                  {i + 1}
+                </div>
+              ))}
+            </div>
+            <div
+              className="seat-selection-seats-container"
+              style={{
+                paddingTop: `${seatSize * 0.1}px`,
+                paddingBottom: `${seatSize * 0.1}px`,
+              }}
+            >
+              <div
+                className="seat-selection-seats"
+                style={{
+                  gridTemplateColumns: `repeat(10, ${seatSize}px)`,
+                  gridGap: `${seatSize * 0.2}px`,
+                }}
+              >
+                {seats.map((seat) => (
+                  <div
+                    key={seat.id}
+                    onClick={() =>
+                      seat.type !== "occupied" && toggleSeatSelection(seat.id)
+                    }
+                    className={`seat-selection-seat seat-selection-${seat.type}`}
+                    style={{
+                      width: `${seatSize}px`,
+                      height: `${seatSize}px`,
+                    }}
+                  ></div>
+                ))}
+              </div>
+              <div className="seat-selection-column-numbers">
+                {Array.from({ length: 10 }, (_, i) => (
+                  <div
+                    key={i}
+                    className="seat-selection-column-number"
+                    style={{ width: `${seatSize}px` }}
+                  >
+                    {i + 1}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="seat-selection-overlay">
+        <h2>{movieName}</h2>
+        <p>{cinema}</p>
+        <p>Asientos seleccionados:</p>
+        <ul>
+          {selectedSeats.map((seat) => (
+            <li key={seat.id}>
+              Fila {seat.row}, Número {seat.number}
+            </li>
           ))}
-        </select>
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="cinema-select">Select a Cinema</label>
-        <select
-          id="cinema-select"
-          className="select-input"
-          value={selectedCinema || ''}
-          onChange={(e) => {
-            const cinemaId = Number(e.target.value);
-            setSelectedCinema(cinemaId || null);
-            setSelectedDate(null);
-            setSelectedTime(null);
-          }}
-          disabled={!selectedMovie || cinemas.length === 0}
+        </ul>
+        <button
+          className="seat-selection-buy-button"
+          onClick={handleBuyTickets}
+          disabled={selectedSeats.length === 0}
         >
-          <option value="">Select a Cinema</option>
-          {cinemas.map((cinema) => (
-            <option key={`cinema-${cinema.cinemaId}`} value={cinema.cinemaId}>
-              {cinema.neighborhood} ({cinema.address})
-            </option>
-          ))}
-        </select>
+          Comprar Entradas
+        </button>
       </div>
-
-      <div className="form-group">
-        <label htmlFor="date-select">Select a Date</label>
-        <select
-          id="date-select"
-          className="select-input"
-          value={selectedDate || ''}
-          onChange={handleDateChange}
-          disabled={!selectedCinema || availableDates.length === 0}
-        >
-          <option value="">Select a Date</option>
-          {availableDates.map((date) => (
-            <option key={`date-${date}`} value={date}>
-              {format(new Date(date), 'PPPP')} {/* Format using Date object */}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="time-select">Select a Time</label>
-        <select
-          id="time-select"
-          className="select-input"
-          value={selectedTime?.showtimeId || ''}
-          onChange={handleTimeChange}
-          disabled={!selectedDate || availableTimes.length === 0}
-        >
-          <option value="">Select a Time</option>
-          {availableTimes
-            .filter((showtime) => new Date(showtime.showtimeDate).toISOString().split('T')[0] === selectedDate)
-            .map((showtime) => (
-              <option key={`time-${showtime.showtimeId}`} value={showtime.showtimeId}>
-                {format(new Date(showtime.showtimeDate), 'p')} {/* Format time */}
-              </option>
-            ))}
-        </select>
-      </div>
-
-      <button
-        className="purchase-button"
-        onClick={handlePurchase}
-        disabled={!selectedTime}
-      >
-        Proceed to Seat Selection
-      </button>
     </div>
   );
 }
