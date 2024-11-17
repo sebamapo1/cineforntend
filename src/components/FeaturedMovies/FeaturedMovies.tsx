@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import styles from './FeaturedMovies.css'; 
+import styles from './FeaturedMovies.css';
+
 interface Movie {
   idPelicula: number;
   nombre: string;
@@ -28,6 +29,10 @@ const FeaturedMovies = () => {
     fetchMovies();
   }, []);
 
+  if (error) {
+    return <div className={styles.error}>{error}</div>;
+  }
+
   const getImageSrc = (base64String: string) => {
     if (base64String?.startsWith('data:image')) {
       return base64String;
@@ -36,10 +41,6 @@ const FeaturedMovies = () => {
       ? `data:image/jpeg;base64,${base64String}`
       : '/api/placeholder/300/450';
   };
-
-  if (error) {
-    return <div className={styles.error}>{error}</div>;
-  }
 
   return (
     <div className={styles.featuredMovies}>
@@ -60,4 +61,4 @@ const FeaturedMovies = () => {
   );
 };
 
-export default FeaturedMovies;
+export default FeaturedMovies;
