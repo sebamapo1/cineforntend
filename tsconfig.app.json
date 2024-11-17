@@ -20,5 +20,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src", "Pruebas2/Carousel.tsx", "Pruebas2/TicketBooking.tsx", "Pruebas2/Carousel.tsx", "Pruebas2/TicketBooking.tsx", "Pruebas2/ItemList.tsx"]
 }

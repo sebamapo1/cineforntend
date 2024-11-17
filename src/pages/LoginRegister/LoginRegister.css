@@ -1,0 +1,58 @@
+.LoginRegister-form {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: black;
+}
+
+.LoginRegister-form h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.LoginRegister-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.LoginRegister-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.LoginRegister-form input {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #ccc;
+}
+
+.LoginRegister-form button {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background-color: #dc2626;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.LoginRegister-form button:hover {
+  background-color: #b91c1c;
+}
+
+.error-message {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+  text-align: center;
+}

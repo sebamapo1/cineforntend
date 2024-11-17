@@ -1,0 +1,94 @@
+.ticket-booking-page {
+    min-height: calc(100vh - 60px); /* Adjust based on navbar height */
+    background-color: #1a365d;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+  }
+  
+  .page-title {
+    font-size: 2.5rem;
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-weight: normal;
+  }
+  
+  .page-title span {
+    color: #ffffff;
+  }
+  
+  
+  .ticket-booking-container {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+  }
+  
+  .select-input {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: #ffffff;
+    color: #1a202c;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1em;
+  }
+  
+  .select-input:disabled {
+    background-color: #f7fafc;
+    cursor: not-allowed;
+  }
+  
+  .select-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  .purchase-button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #93c5fd;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 1rem;
+  }
+  
+  .purchase-button:hover:not(:disabled) {
+    background-color: #60a5fa;
+  }
+  
+  .purchase-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .error-message {
+    color: #dc2626;
+    padding: 1rem;
+    text-align: center;
+    background-color: #fee2e2;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+  
+  .loading-message {
+    padding: 1rem;
+    text-align: center;
+    color: #ffffff;
+  }

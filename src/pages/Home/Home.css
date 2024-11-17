@@ -1,0 +1,36 @@
+.home-container {
+  width: 100%;
+}
+
+.carousel-ticket-container {
+  position: relative;
+  width: 100%;
+  height: 600px;
+}
+
+.ticket-booking-overlay {
+  position: absolute; /* Asegura que el overlay se posicione correctamente */
+  top: 75px;
+  left: 8%; 
+  z-index: 10;
+  background-color: #4a4a4a;
+  padding: 0; /* Ajusta el padding para permitir que ticket-booking ocupe todo el espacio */
+  border-radius: 10px;
+  width: calc(100% - 16%); /* Establece el ancho para llenar el overlay, restando el margen */
+  max-width: 400px; /* Mantiene el ancho máximo */
+  height: auto; /* Permite que la altura sea dinámica */
+}
+
+@media (max-width: 1024px) {
+  .ticket-booking-overlay {
+    left: 10%; 
+  }
+}
+
+@media (max-width: 768px) {
+  .ticket-booking-overlay {
+    position: static;
+    max-width: 100%;
+    margin-top: 20px;
+  }
+}
