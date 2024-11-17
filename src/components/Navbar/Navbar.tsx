@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'; // Import Link
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import './Navbar.css';
@@ -18,7 +19,7 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <div className="container navbar-content">
-        <a href="/" className="navbar-brand">WTF Cinema</a>
+        <Link to="/" className="navbar-brand">WTF Cinema</Link>
         <div className="navbar-links">
           {isAuthenticated ? (
             <div className="profile-menu">
@@ -27,15 +28,15 @@ export default function Navbar() {
               </button>
               {isProfileMenuOpen && (
                 <div className="profile-dropdown">
-                  <a href="/cinema-purchases" className="dropdown-item">My Purchases</a>
-                  <a href="#" onClick={handleLogout} className="dropdown-item">Log out</a>
+                  <Link to="/cinema-purchases" className="dropdown-item">My Purchases</Link>
+                  <button onClick={handleLogout} className="dropdown-item">Log out</button>
                 </div>
               )}
             </div>
           ) : (
             <>
-              <a href="/login" className="navbar-button">Iniciar sesión</a>
-              <a href="/register" className="navbar-button">Registrarse</a>
+              <Link to="/login" className="navbar-button">Iniciar sesión</Link>
+              <Link to="/register" className="navbar-button">Registrarse</Link>
             </>
           )}
         </div>
