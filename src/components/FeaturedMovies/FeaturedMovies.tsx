@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import styles from './FeaturedMovies.module.css'; // Ensure this path is correct
-
+import styles from './FeaturedMovies.css'; 
 interface Movie {
   idPelicula: number;
   nombre: string;
