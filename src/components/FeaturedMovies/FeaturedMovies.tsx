@@ -14,7 +14,9 @@ const FeaturedMovies = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await fetch('https://cine-o753.onrender.com/movies');
+        const response = await fetch('https://cine-o753.onrender.com/movies', {
+          mode: 'no-cors'
+        });
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -25,10 +27,10 @@ const FeaturedMovies = () => {
         console.error('Error fetching movies:', error);
       }
     };
-
+  
     fetchMovies();
   }, []);
-
+  
   const getImageSrc = (base64String: string) => {
     if (base64String?.startsWith('data:image')) {
       return base64String;
