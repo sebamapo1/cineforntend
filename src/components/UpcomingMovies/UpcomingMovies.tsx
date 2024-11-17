@@ -25,7 +25,6 @@ export default function UpcomingMovies() {
           throw new Error('Network response was not ok')
         }
         const movies = await response.json()
-        // Sort movies alphabetically by name and take only the first 3
         const sortedMovies = movies
           .sort((a: Movie, b: Movie) => a.name.localeCompare(b.name))
           .slice(0, 3)

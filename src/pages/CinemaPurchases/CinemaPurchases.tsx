@@ -44,7 +44,7 @@ export default function CinemaPurchases() {
               <p>
                 Asientos: {purchase.reservationDetails.map(detail => `A${detail.seatId}`).join(", ")}
               </p>
-              <p>Precio Total: {/* Insert price logic here if available */}</p>
+              
             </li>
           ))}
         </ul>

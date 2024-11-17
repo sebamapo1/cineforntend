@@ -42,7 +42,7 @@ const FeaturedMovies = () => {
 
   return (
     <div className="featured-movies">
-      <h2>Featured Movies</h2>
+      <h2>Películas Destacadas</h2>
       <div className="featured-movies-grid">
         {featuredMovies.map((movie) => (
           <div key={movie.movieId} className="featured-movie">

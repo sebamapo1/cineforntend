@@ -3,20 +3,41 @@ import { Link } from 'react-router-dom';
 import './Carousel.css';
 
 interface Movie {
-  id: number;
-  title: string;
-  image: string;
+  movieId: number;
+  name: string;
+  coverImageBase64: string;
 }
 
 export default function Carousel() {
-  const movies: Movie[] = [
-    { id: 1, title: 'Inception', image: '/placeholder.svg?height=600&width=1200' },
-    { id: 2, title: 'The Dark Knight', image: '/placeholder.svg?height=600&width=1200' },
-    { id: 3, title: 'Interstellar', image: '/placeholder.svg?height=600&width=1200' },
-  ];
-
+  const [movies, setMovies] = useState<Movie[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [error, setError] = useState<string>('');
+
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const response = await fetch('https://cine-o753.onrender.com/movies');
+        if (!response.ok) {
+          if (response.status === 204) {
+            setMovies([]); // Handle no content response
+            return;
+          }
+          throw new Error('Network response was not ok');
+        }
+        const fetchedMovies = await response.json();
+        const sortedMovies = fetchedMovies
+          .sort((a: Movie, b: Movie) => a.name.localeCompare(b.name))
+          .slice(0, 3); // Display only the first 3 movies
+        setMovies(sortedMovies);
+      } catch (error) {
+        setError('Error fetching movies');
+        console.error('Error fetching movies:', error);
+      }
+    };
+
+    fetchMovies();
+  }, []);
 
   const nextSlide = () => {
     if (!isTransitioning) {
@@ -48,16 +69,24 @@ export default function Carousel() {
     return () => clearInterval(autoPlayTimer);
   }, []);
 
+  if (error) {
+    return <div className="error">{error}</div>;
+  }
+
+  if (movies.length === 0) {
+    return <div className="loading">Cargando películas...</div>;
+  }
+
   return (
     <div className="carousel-container">
       {movies.map((movie, index) => (
         <div
-          key={movie.id}
+          key={movie.movieId}
           className={`carousel-slide ${index === currentSlide ? 'active' : ''}`}
-          style={{ backgroundImage: `url(${movie.image})` }}
+          style={{ backgroundImage: `url(${movie.coverImageBase64})` }}
         >
           <div className="carousel-content">
-            <h2 className="movie-title">{movie.title}</h2>
+            <h2 className="movie-title">{movie.name}</h2>
             <button className="watch-now-btn">
               <Link to="/ticket-booking">Watch Now</Link>
             </button>
@@ -72,8 +101,8 @@ export default function Carousel() {
       </button>
       <div className="carousel-indicators">
         {movies.map((_, index) => (
-          <span 
-            key={index} 
+          <span
+            key={index}
             className={`indicator ${index === currentSlide ? 'active' : ''}`}
             onClick={() => setCurrentSlide(index)}
           ></span>
